@@ -9,6 +9,8 @@ import citaRoutes from './src/routes/cita.routes.js';
 import servicioRoutes from './src/routes/servicio.routes.js';
 import historialRoutes from './src/routes/historial.routes.js';
 import especieRoutes from './src/routes/especie.routes.js';
+import sucursalRoutes from './src/routes/sucursal.routes.js';
+
 
 // Cargar variables de entorno
 
@@ -40,4 +42,5 @@ app.use('/api/citas', citaRoutes);
 app.use('/api/servicios', servicioRoutes);
 app.use('/api/historial', historialRoutes); 
 app.use('/api/especies', especieRoutes);
+app.use('/api/sucursales', sucursalRoutes);
  

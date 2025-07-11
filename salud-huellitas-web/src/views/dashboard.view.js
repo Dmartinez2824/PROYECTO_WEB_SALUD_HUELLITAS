@@ -22,13 +22,22 @@ export function mostrarDashboard(container) {
   seccionGrid.classList.add('dashboard_grid');
 
   const secciones = [
+    'Citas programadas online',
     'Atención Veterinaria 24/7',
     'Vacunación y desparasitación',
-    'Citas programadas online',
-    'Servicios de peluquería canina',
-    'Tienda de productos para mascotas',
+    'Historial de citas realizadas',
+    'Servicio de entrega de medicamentos',
     'Adopciones y bienestar animal'
   ];
+  const Descripción = [
+    'Programa tus citas en línea de manera rápida y fácil',
+    'Atención veterinaria las 24 horas del día, los 7 días de la semana',
+    'Vacunación y desparasitación para mantener a tus mascotas saludables',
+    'Revisa tus citas realizadas en un solo lugar',
+    'Recibe tus medicamentos en la comodidad de tu hogar',
+    'Encuentra a tu nuevo amigo fiel en nuestra sección de adopciones'
+    ];
+
 
   secciones.forEach((titulo, i) => {
     const sec = document.createElement('div');
@@ -36,8 +45,8 @@ export function mostrarDashboard(container) {
     sec.classList.add('dashboard_section_orden');
     const h3 = document.createElement('h3');
     h3.textContent = `🐾 ${titulo}`;
-    const p = document.createElement('p');
-    p.textContent = `Descripción corta de "${titulo}". Aquí puedes escribir lo que quieras.`;
+    const p = document.createElement('p');  
+    p.textContent = Descripción[i];
 
     sec.append(h3, p);
     seccionGrid.appendChild(sec);

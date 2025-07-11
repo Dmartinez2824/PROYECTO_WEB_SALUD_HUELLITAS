@@ -19,6 +19,10 @@ export function mostrarCitas(container) {
   const selectMascota = document.createElement('select');
   selectMascota.classList.add('select');
   selectMascota.required = true;
+  const selectSucursal = document.createElement('select');
+  selectSucursal.classList.add('select');
+  selectSucursal.required = true;
+  selectSucursal.innerHTML = '<option value="">Selecciona una sucursal</option>'; 
 
   const selectServicio = document.createElement('select');
   selectServicio.classList.add('select');
@@ -39,10 +43,14 @@ export function mostrarCitas(container) {
   btn.classList.add('btn');
   btn.textContent = 'Agendar';
 
+  const detalles = document.createElement('p');
+  detalles.textContent = 'Recuerde que dependiendo del servicio seleccionado, se le asignara la sucursal correspondiente.';
+  detalles.classList.add('detalles');
+
   const mensaje = document.createElement('p');
   mensaje.classList.add('mensaje');
 
-  form.append(h3, selectMascota, selectServicio, inputFecha, inputHora, btn, mensaje);
+  form.append(h3, selectMascota, selectServicio,selectSucursal, inputFecha, inputHora, btn, detalles, mensaje);
 
   const listaContenedor = document.createElement('div');
   listaContenedor.classList.add('dashboard_section', 'full-width');
@@ -55,11 +63,13 @@ export function mostrarCitas(container) {
   container.innerHTML = '';
   container.append(header, section);
 
+  // Mostrar mensaje de éxito o error
   function mostrarMensaje(texto, tipo = 'ok') {
     mensaje.textContent = texto;
     mensaje.className = tipo === 'error' ? 'mensaje mensaje-error' : 'mensaje mensaje-exito';
   }
 
+  // Cargar mascotas desde backend
   async function cargarMascotas() {
     try {
       const res = await fetchConToken('http://localhost:3000/api/mascotas');
@@ -76,15 +86,35 @@ export function mostrarCitas(container) {
     }
   }
 
+  async function cargarSucursales() {
+  try {
+    const res = await fetch('http://localhost:3000/api/sucursales');
+    const data = await res.json();
+
+    selectSucursal.innerHTML = '<option value="">Selecciona una sucursal</option>';
+    data.forEach(sucursal => {
+      const opt = document.createElement('option');
+      opt.value = sucursal.id;
+      opt.textContent = sucursal.nombre;
+      selectSucursal.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('❌ Error al cargar sucursales:', e);
+    selectSucursal.innerHTML = '<option value="">Error al cargar sucursales</option>';
+  }
+}
+
+
+  // Cargar servicios desde backend
   async function cargarServicios() {
     try {
       const res = await fetch('http://localhost:3000/api/servicios');
       const data = await res.json();
       selectServicio.innerHTML = '<option value="">Selecciona tipo de cita</option>';
-      data.forEach(obj => {
+      data.forEach(s => {
         const opt = document.createElement('option');
-        opt.value = obj.id;
-        opt.textContent = obj.nombre;
+        opt.value = s.id;
+        opt.textContent = s.nombre;
         selectServicio.appendChild(opt);
       });
     } catch {
@@ -92,89 +122,99 @@ export function mostrarCitas(container) {
     }
   }
 
+  // Mostrar citas programadas del usuario
   async function cargarCitas() {
     try {
+      const token = localStorage.getItem('accessToken');
+      console.log('🧪 Token actual:', token);
+
       const res = await fetchConToken('http://localhost:3000/api/citas');
       const data = await res.json();
 
-      ul.innerHTML = '';
-      if (!data.length) {
-        ul.innerHTML = '<li>No hay citas programadas.</li>';
-        return;
-      }
+     ul.innerHTML = '';
+if (!data.length) {
+  ul.innerHTML = '<li>No hay citas programadas.</li>';
+  return;
+}
 
-      data.forEach(c => {
-        const li = document.createElement('li');
-        li.classList.add('cita-card');
-        li.innerHTML = `
-          <strong>${c.fecha}</strong> a las ${c.hora}<br>
-          Mascota: ${c.mascota} | Servicio: ${c.sucursal}
-        `;
-        ul.appendChild(li);
-      });
-    } catch {
-      ul.innerHTML = '<li>Error al cargar citas</li>';
+data.forEach(c => {
+  const li = document.createElement('li');
+  li.classList.add('cita-card');
+  li.style.marginBottom = '1rem'; // Espaciado visual
+
+  // Estilos por estado
+  let estadoColor = '#f1c40f'; // amarillo por defecto
+  if (c.estado === 'aprobada') estadoColor = '#2ecc71'; // verde
+  if (c.estado === 'rechazada') estadoColor = '#e74c3c'; // rojo
+
+  // Estructura de la cita
+  li.innerHTML = `
+    <div style="
+      border-left: 6px solid ${estadoColor}; 
+      padding: 10px; 
+      background: #f9f9f9; 
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    ">
+      <p><strong>📅 Fecha:</strong> ${c.fecha} a las ${c.hora}</p>
+      <p><strong>🐶 Mascota:</strong> ${c.mascota}</p>
+      <p><strong>🏥 Sucursal:</strong> ${c.sucursal}</p>
+      <p><strong>🩺 Servicio:</strong> ${c.servicio || 'No asignado'}</p>
+      <p><strong>📌 Estado:</strong> <span style="color: ${estadoColor}; font-weight: bold;">${c.estado}</span></p>
+    </div>
+  `;
+  ul.appendChild(li);
+});
+
+    } catch (error) {
+  console.error('❌ Error al cargar citas:', error);
+  ul.innerHTML = '<li>Error al cargar citas</li>';
     }
   }
 
-  async function inicializar() {
+  // Enviar cita al backend
+ form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const mascota_id = parseInt(selectMascota.value);
+  const servicio_id = parseInt(selectServicio.value);  // nuevo
+  const sucursal_id = parseInt(selectSucursal.value);  // nuevo
+  const fecha = inputFecha.value;
+  const hora = inputHora.value;
+
+  if (!mascota_id || !servicio_id || !sucursal_id || !fecha || !hora) {
+    mostrarMensaje('Todos los campos son obligatorios', 'error');
+    return;
+  }
+
+  try {
     const token = localStorage.getItem('accessToken');
-    if (!token) {
-      mostrarMensaje('Debes iniciar sesión para ver tus citas', 'error');
-      return;
-    }
+    const res = await fetch('http://localhost:3000/api/citas', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ mascota_id, sucursal_id, servicio_id, fecha, hora })
+    });
 
-    await cargarMascotas();
-    await cargarServicios();
-    await cargarCitas();
+    const data = await res.json();
+    if (res.ok) {
+      mostrarMensaje('Cita agendada exitosamente');
+      form.reset();
+      await cargarCitas();
+    } else {
+      mostrarMensaje(data.mensaje || 'Error al agendar cita', 'error');
+    }
+  } catch (err) {
+    mostrarMensaje('Error de conexión', 'error');
   }
+});
 
-  inicializar();
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const fecha = inputFecha.value;
-    const fechaSeleccionada = new Date(fecha);
-    const hoy = new Date();
-    const mañana = new Date();
-    mañana.setDate(hoy.getDate() + 1);
-
-    if (!fecha || isNaN(fechaSeleccionada.getTime())) {
-      mostrarMensaje('Selecciona una fecha válida', 'error');
-      return;
-    }
-
-    if (fechaSeleccionada < mañana) {
-      mostrarMensaje('La cita debe ser al menos con 1 día de anticipación.', 'error');
-      return;
-    }
-
-    const mascota_id = parseInt(selectMascota.value);
-    const sucursal_id = parseInt(selectServicio.value);
-    const hora = inputHora.value;
-
-    if (!mascota_id || !sucursal_id || !hora) {
-      mostrarMensaje('Todos los campos son obligatorios', 'error');
-      return;
-    }
-
-    try {
-      const res = await fetchConToken('http://localhost:3000/api/citas', {
-        method: 'POST',
-        body: JSON.stringify({ mascota_id, sucursal_id, fecha, hora })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        mostrarMensaje('Cita agendada exitosamente');
-        form.reset();
-        await cargarCitas();
-      } else {
-        mostrarMensaje(data.mensaje || 'Error al agendar cita', 'error');
-      }
-    } catch {
-      mostrarMensaje('Error al enviar cita', 'error');
-    }
-  });
+  // Inicializar todo
+  cargarMascotas();
+  cargarServicios();
+  cargarSucursales();
+  cargarCitas();
 }

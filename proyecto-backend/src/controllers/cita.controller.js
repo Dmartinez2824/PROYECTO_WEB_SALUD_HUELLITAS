@@ -1,14 +1,10 @@
-import {
-  registrarCita,
-  citaExistente,
-  obtenerCitasPorUsuario
-} from '../models/cita.model.js';
+import {registrarCita,citaExistente,obtenerCitasPorUsuario} from '../models/cita.model.js';
 
 
 // Registrar una nueva cita
 export const crearCita = async (req, res) => {
   try {
-    const { mascota_id, sucursal_id, fecha, hora } = req.body;
+const { mascota_id, sucursal_id, fecha, hora, servicio_id } = req.body;
 
     if (!mascota_id || !sucursal_id || !fecha || !hora) {
       return res.status(400).json({ mensaje: 'Todos los campos son obligatorios' });
@@ -23,12 +19,12 @@ export const crearCita = async (req, res) => {
 }
 
 
-    const resultado = await registrarCita(mascota_id, sucursal_id, fecha, hora);
 
-    res.status(201).json({
-      mensaje: 'Cita registrada correctamente',
-      idInsertado: resultado.insertId
-    });
+    const resultado = await registrarCita(mascota_id, sucursal_id, fecha, hora, servicio_id);
+res.status(201).json({
+  mensaje: 'Cita registrada correctamente',
+  idInsertado: resultado.insertId
+});
   } catch (error) {
     res.status(500).json({
       mensaje: 'Error al registrar la cita',
@@ -45,6 +41,7 @@ export const listarCitas = async (req, res) => {
     const citas = await obtenerCitasPorUsuario(usuario_id);
     res.json(citas);
   } catch (error) {
+    console.error('❌ Error en listarCitas:', error); // <- AÑADE ESTO
     res.status(500).json({
       mensaje: 'Error al obtener citas',
       error: error.message
