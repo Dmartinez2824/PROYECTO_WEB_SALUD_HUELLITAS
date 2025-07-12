@@ -16,13 +16,13 @@ ORDER BY c.fecha DESC, c.hora ASC;`;
 };
 
 
-export const registrarCita = async (mascota_id, sucursal_id, fecha, hora, servicio_id) => {
+export const registrarCita = async (mascota_id, sucursal_id, fecha, hora, servicio_id, motivo) => {
   const query1 = `
-    INSERT INTO citas (mascota_id, sucursal_id, fecha, hora)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO citas (mascota_id, sucursal_id, fecha, hora, motivo)
+    VALUES (?, ?, ?, ?, ?)
   `;
 
-  const [citaResult] = await connection.query(query1, [mascota_id, sucursal_id, fecha, hora]);
+  const [citaResult] = await connection.query(query1, [mascota_id, sucursal_id, fecha, hora, motivo]);
   const cita_id = citaResult.insertId;
 
   const query2 = `
@@ -34,6 +34,7 @@ export const registrarCita = async (mascota_id, sucursal_id, fecha, hora, servic
 
   return { insertId: cita_id };
 };
+
 
 
 
