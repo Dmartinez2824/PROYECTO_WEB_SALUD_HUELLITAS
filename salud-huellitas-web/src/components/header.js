@@ -44,15 +44,15 @@ export function crearHeader() {
       { hash: '#suscripcion', icon: 'bx-network-chart', text: 'Suscripción' },
       { hash: '#mascotas', icon: 'bx-briefcase-alt-2', text: 'Mis Mascotas' },
       { hash: '#citas', icon: 'bx-message', text: 'Mis Citas' },
-      { hash: '#historial', icon: 'bx-bell', text: 'Historial' }
+      // { hash: '#historial', icon: 'bx-bell', text: 'Historial' }
     );
   } else if (rol_id === 1) {
     items.push(
       { hash: '#admin-citas', icon: 'bx-calendar', text: 'Citas del Día' },
       { hash: '#admin-mascotas', icon: 'bx-notepad', text: 'Mascotas' },
-      { hash: '#usuarios', icon: 'bx-user', text: 'Usuarios' },
-      { hash: '#servicios', icon: 'bx-cog', text: 'Servicios' },
-      { hash: '#reportes', icon: 'bx-bar-chart-alt-2', text: 'Reportes' }
+      // { hash: '#usuarios', icon: 'bx-user', text: 'Usuarios' },
+      // { hash: '#servicios', icon: 'bx-cog', text: 'Servicios' },
+      // { hash: '#reportes', icon: 'bx-bar-chart-alt-2', text: 'Reportes' }
     );
   }
 

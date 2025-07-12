@@ -18,7 +18,7 @@ export function mostrarPanelCliente(container) {
   const opciones = [
     { texto: '🐶 Mis Mascotas', ruta: '#mascotas', color: '#63C8B7' },
     { texto: '📅 Mis Citas', ruta: '#citas', color: '#719BFD' },
-    { texto: '🧾 Mi Historial', ruta: '#historial', color: '#63C8B7' },
+    { texto: '🧾 Suscripcion', ruta: '#suscripcion', color: '#63C8B7' },
     { texto: '🔐 Cerrar sesión', ruta: '#', color: '#fd7979' }
   ];
 

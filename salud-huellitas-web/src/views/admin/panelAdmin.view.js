@@ -36,19 +36,19 @@ export async function mostrarPanelAdmin(container) {
   const accesos = document.createElement('div');
   accesos.classList.add('accesos-admin');
 
-  const btnUsuarios = document.createElement('button');
-  btnUsuarios.textContent = '👥 Gestionar Usuarios';
-  btnUsuarios.onclick = () => (window.location.hash = '#admin-usuarios');
+  // const btnUsuarios = document.createElement('button');
+  // btnUsuarios.textContent = '👥 Gestionar Usuarios';
+  // btnUsuarios.onclick = () => (window.location.hash = '#admin-usuarios');
 
   const btnMascotas = document.createElement('button');
   btnMascotas.textContent = '🐾 Gestionar Mascotas';
   btnMascotas.onclick = () => (window.location.hash = '#admin-mascotas');
 
-  const btnSuscripciones = document.createElement('button');
-  btnSuscripciones.textContent = '📦 Gestionar Suscripciones';
-  btnSuscripciones.onclick = () => (window.location.hash = '#admin-suscripciones');
+  // const btnSuscripciones = document.createElement('button');
+  // btnSuscripciones.textContent = '📦 Gestionar Suscripciones';
+  // btnSuscripciones.onclick = () => (window.location.hash = '#admin-suscripciones');
 
-  accesos.append(btnUsuarios, btnMascotas, btnSuscripciones);
+  accesos.append(btnMascotas);
 
   // Armar la vista
   seccion.append(saludo, resumen, accesos);
