@@ -80,6 +80,14 @@ INSERT INTO servicios (nombre) VALUES
 ('Cirugía menor'), ('Limpieza dental'), ('Hospitalización'), ('Ecografía'),
 ('Control prenatal'), ('Certificado de viaje'), ('Microchip e identificación'),
 ('Esterilización'), ('Análisis de laboratorio'), ('Consulta etológica');
+-- cita_servicio
+CREATE TABLE cita_servicio (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cita_id INT,
+  servicio_id INT,
+  FOREIGN KEY (cita_id) REFERENCES citas(id),
+  FOREIGN KEY (servicio_id) REFERENCES servicios(id)
+);
 
 -- CITAS 
 CREATE TABLE citas (

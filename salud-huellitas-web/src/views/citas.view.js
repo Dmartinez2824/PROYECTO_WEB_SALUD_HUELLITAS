@@ -33,6 +33,19 @@ export function mostrarCitas(container) {
   inputFecha.type = 'date';
   inputFecha.classList.add('input');
   inputFecha.required = true;
+  // Calcular la fecha de mañana
+const hoy = new Date();
+hoy.setDate(hoy.getDate() + 1); // mañana
+
+// Formatear a yyyy-mm-dd
+const yyyy = hoy.getFullYear();
+const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+const dd = String(hoy.getDate()).padStart(2, '0');
+const minFecha = `${yyyy}-${mm}-${dd}`;
+
+// Establecer mínimo en el input de fecha
+inputFecha.min = minFecha;
+
 
   const inputHora = document.createElement('input');
   inputHora.type = 'time';
@@ -189,6 +202,15 @@ export function mostrarCitas(container) {
     const fecha = inputFecha.value;
     const hora = inputHora.value;
     const motivo = motivosPorServicio[servicio_id] || 'Cita programada';
+    const fechaSeleccionada = new Date(inputFecha.value);
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaMinima.getDate() + 1);
+
+    if (fechaSeleccionada < fechaMinima) {
+      mostrarMensaje('La cita debe agendarse al menos con 1 día de anticipación', 'error');
+      return;
+    }
+
 
     if (!mascota_id || !servicio_id || !sucursal_id || !fecha || !hora) {
       mostrarMensaje('Todos los campos son obligatorios', 'error');
