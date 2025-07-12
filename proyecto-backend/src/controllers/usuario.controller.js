@@ -19,6 +19,12 @@ const generarRefreshToken = (usuario) => {
 export const registrarUsuario = async (req, res) => {
   try {
     const { nombre, correo, contrasena, rol_id } = req.body;
+     const yaExiste = await buscarUsuarioPorCorreo(correo);
+    if (yaExiste) {
+      return res.status(409).json({
+        mensaje: 'El correo ya está registrado. Intenta con otro o recupera tu cuenta.'
+      });
+    }
     const hash = await bcrypt.hash(contrasena, 10);
     const resultado = await crearUsuario(nombre, correo, hash, rol_id);
     return res.status(201).json({ mensaje: 'Usuario registrado', id: resultado.insertId });

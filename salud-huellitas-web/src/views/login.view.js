@@ -6,12 +6,12 @@ export function mostrarLogin(container) {
   const section = document.createElement('section');
   section.classList.add('login-contenedor');
 
-  // Lado izquierdo (imagen o color de fondo)
+  // Lado izquierdo
   const ladoIzquierdo = document.createElement('div');
   ladoIzquierdo.classList.add('login-izquierda');
   ladoIzquierdo.innerHTML = `<img src="../img/imagen_login2.jpg" alt="logo" class="login-logo" />`;
 
-  // Lado derecho (formulario)
+  // Lado derecho
   const ladoDerecho = document.createElement('div');
   ladoDerecho.classList.add('login-derecha');
 
@@ -26,10 +26,28 @@ export function mostrarLogin(container) {
   inputCorreo.placeholder = 'Correo electrónico';
   inputCorreo.required = true;
 
+  // Contenedor para la contraseña y el icono
+  const contenedorPass = document.createElement('div');
+  contenedorPass.classList.add('input-password-container');
+
   const inputPass = document.createElement('input');
   inputPass.type = 'password';
   inputPass.placeholder = 'Contraseña';
   inputPass.required = true;
+  inputPass.id = 'input-password';
+
+  const togglePassword = document.createElement('span');
+  togglePassword.classList.add('toggle-password');
+  togglePassword.textContent = '👁️';
+  togglePassword.style.cursor = 'pointer';
+
+  togglePassword.addEventListener('click', () => {
+    const visible = inputPass.type === 'text';
+    inputPass.type = visible ? 'password' : 'text';
+    togglePassword.textContent = visible ? '👁️' : '🙈';
+  });
+
+  contenedorPass.append(inputPass, togglePassword);
 
   const btn = document.createElement('button');
   btn.type = 'submit';
@@ -41,12 +59,10 @@ export function mostrarLogin(container) {
   const enlaceRegistro = document.createElement('p');
   enlaceRegistro.innerHTML = `¿No tienes cuenta? <a href="#registro">Regístrate aquí</a>`;
 
-  form.append(inputCorreo, inputPass, btn, mensaje);
+  form.append(inputCorreo, contenedorPass, btn, mensaje);
   ladoDerecho.append(titulo, form, enlaceRegistro);
 
-  // Ensamblar la vista completa
   section.append(ladoIzquierdo, ladoDerecho);
-
   container.innerHTML = '';
   container.append(header, section);
 
@@ -73,7 +89,8 @@ export function mostrarLogin(container) {
         const rol = data.usuario.rol_id;
         if (rol === 3) window.location.hash = '#panel-cliente';
         else if (rol === 2) window.location.hash = '#panel-empleado';
-        else if (rol === 1) window.location.hash = '#panel-admin';
+        else if (rol === 1) window.location.hash = '#panel-admin'; 
+
       } else {
         mensaje.textContent = data.mensaje;
         mensaje.style.color = 'red';

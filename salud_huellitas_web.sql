@@ -60,7 +60,14 @@ CREATE TABLE citas (
     FOREIGN KEY (mascota_id) REFERENCES mascotas(id),
     FOREIGN KEY (sucursal_id) REFERENCES sucursales(id)
 );
+ALTER TABLE citas ADD estado ENUM('pendiente', 'aprobada', 'rechazada') DEFAULT 'pendiente';
+
 select * from citas;
+SELECT c.id, c.fecha, c.hora, m.nombre AS mascota, s.nombre AS sucursal, m.usuario_id
+FROM citas c
+LEFT JOIN mascotas m ON c.mascota_id = m.id
+LEFT JOIN sucursales s ON c.sucursal_id = s.id;
+
 -- Tabla servicios
 CREATE TABLE servicios (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -86,7 +93,35 @@ CREATE TABLE historial_citas (
     tratamiento TEXT,
     FOREIGN KEY (cita_id) REFERENCES citas(id)
     );
+    ALTER TABLE citas
+ADD COLUMN servicio_id INT AFTER mascota_id,
+ADD FOREIGN KEY (servicio_id) REFERENCES servicios(id);
+
     select * from historial_citas;
+    
+    -- suscripcion 
+DROP TABLE IF EXISTS suscripciones;
+
+CREATE TABLE suscripciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT, -- FK directa al usuario (opcional si ya tienes relación por mascota)
+  mascota_id INT,
+  direccion VARCHAR(255),
+  telefono VARCHAR(20),
+  plan VARCHAR(100) NOT NULL, -- puede ser: Básico, Básico Familiar, Premium, Premium Familiar
+  fecha_inicio DATE NOT NULL ,
+  FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
+  FOREIGN KEY (mascota_id) REFERENCES mascotas(id)
+);
+
+ALTER TABLE suscripciones
+MODIFY mascota_id INT NULL,
+ADD CONSTRAINT fk_mascota
+FOREIGN KEY (mascota_id) REFERENCES mascotas(id) ON DELETE SET NULL;
+select * from usuarios;
+select * from suscripciones;
+select * from mascotas;
+select * from servicios;
     
     ALTER TABLE usuarios ADD COLUMN rol ENUM('admin', 'empleado', 'cliente') DEFAULT 'cliente';
 
@@ -94,12 +129,31 @@ CREATE TABLE historial_citas (
     
 -- Insertar roles
 INSERT INTO roles (nombre) VALUES ('admin'), ('empleado'), ('cliente');
+DELETE FROM roles WHERE nombre = 'empleado';
+-- Verifica primero los IDs actuales
+SELECT * FROM roles;
+DROP TABLE roles;
+UPDATE usuarios SET rol_id = 2 WHERE rol_id = 3;
 
+
+-- Supongamos que 'empleado' tiene id = 2
+DELETE FROM roles WHERE id = 2;
+-- Cambiar empleados a admin (rol_id = 1)
+UPDATE usuarios SET rol_id = 1 WHERE rol_id = 2;
+UPDATE roles SET id = 2 WHERE id = 3;
+
+
+
+select * from roles;
 -- Insertar usuarios
 INSERT INTO usuarios (nombre, correo, contrasena, rol_id) VALUES
 ('Administrador General', 'admin@huellitas.com', 'admin123', 1),
 ('Carlos Empleado', 'empleado1@huellitas.com', 'empleado123', 2),
 ('Laura Cliente', 'cliente1@huellitas.com', 'cliente123', 3);
+
+INSERT INTO usuarios (nombre, correo, contrasena, rol_id) VALUES
+('Administrador General', 'admin_1@huellitas.com', 'Admin123.', 1);
+
 
 -- Insertar especies
 INSERT INTO especies (nombre) VALUES ('Perro'), ('Gato'), ('Conejo');
@@ -123,12 +177,18 @@ INSERT INTO empleados_sucursal (usuario_id, sucursal_id) VALUES
 INSERT INTO servicios (nombre) VALUES
 ('Vacunación'),
 ('Desparasitación'),
-('Consulta General');
-
--- Insertar citas
-INSERT INTO citas (mascota_id, sucursal_id, fecha, hora) VALUES
-(1, 1, '2025-06-10', '10:00:00'),
-(2, 2, '2025-06-11', '11:30:00');
+('Consulta General'),
+('Radiografía'),
+('Cirugía menor'),
+('Limpieza dental'),
+('Hospitalización'),
+('Ecografía'),
+('Control prenatal'),
+('Certificado de viaje'),
+('Microchip e identificación'),
+('Esterilización'),
+('Análisis de laboratorio'),
+('Consulta etológica');
 
 -- Insertar cita_servicio
 INSERT INTO cita_servicio (cita_id, servicio_id) VALUES

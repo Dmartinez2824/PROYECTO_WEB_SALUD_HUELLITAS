@@ -10,9 +10,7 @@ JOIN sucursales s ON c.sucursal_id = s.id
 LEFT JOIN cita_servicio cs ON cs.cita_id = c.id
 LEFT JOIN servicios v ON cs.servicio_id = v.id
 WHERE m.usuario_id = ?
-ORDER BY c.fecha DESC, c.hora ASC;
-
-  `;
+ORDER BY c.fecha DESC, c.hora ASC;`;
   const [rows] = await connection.query(query, [usuario_id]);
   return rows;
 };

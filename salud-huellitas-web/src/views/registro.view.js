@@ -82,28 +82,31 @@ if (!regexContrasena.test(contrasena)) {
 }
 
 
-    try {
-      const res = await fetch('http://localhost:3000/api/usuarios/registro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, correo, contrasena, rol_id: 3 })
-      });
+  try {
+  const res = await fetch('http://localhost:3000/api/usuarios/registro', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, correo, contrasena, rol_id: 3 })
+  });
 
-      const data = await res.json();
+  const data = await res.json();
 
-      if (res.ok) {
-        mensaje.textContent = 'Registro exitoso. Redirigiendo...';
-        mensaje.style.color = 'green';
-        setTimeout(() => {
-          window.location.hash = '#login';
-        }, 1500);
-      } else {
-        mensaje.textContent = data.mensaje;
-        mensaje.style.color = 'red';
-      }
-    } catch (error) {
-      mensaje.textContent = 'Error al registrar.';
-      mensaje.style.color = 'red';
-    }
+  if (res.ok) {
+    mensaje.textContent = '✅ Registro exitoso. Redirigiendo...';
+    mensaje.style.color = 'green';
+    setTimeout(() => {
+      window.location.hash = '#login';
+    }, 1500);
+  } else {
+    // Mostrar mensaje claro del backend
+    mensaje.textContent = data.mensaje || '❌ Error al registrar el usuario.';
+    mensaje.style.color = 'red';
+  }
+} catch (error) {
+  // Solo para errores de red o de conexión
+  mensaje.textContent = '❌ Error de conexión con el servidor.';
+  mensaje.style.color = 'red';
+}
+
   });
 }

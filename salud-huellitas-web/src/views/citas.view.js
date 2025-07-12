@@ -53,7 +53,7 @@ export function mostrarCitas(container) {
   form.append(h3, selectMascota, selectServicio,selectSucursal, inputFecha, inputHora, btn, detalles, mensaje);
 
   const listaContenedor = document.createElement('div');
-  listaContenedor.classList.add('dashboard_section', 'full-width');
+  listaContenedor.classList.add( 'full-width');
   listaContenedor.innerHTML = '<h3>Mis Citas Programadas</h3>';
   const ul = document.createElement('ul');
   ul.classList.add('lista-citas');
@@ -140,21 +140,17 @@ if (!data.length) {
 data.forEach(c => {
   const li = document.createElement('li');
   li.classList.add('cita-card');
-  li.style.marginBottom = '1rem'; // Espaciado visual
 
   // Estilos por estado
   let estadoColor = '#f1c40f'; // amarillo por defecto
-  if (c.estado === 'aprobada') estadoColor = '#2ecc71'; // verde
+  if (c.estado === 'aceptada') estadoColor = '#2ecc71';
   if (c.estado === 'rechazada') estadoColor = '#e74c3c'; // rojo
 
   // Estructura de la cita
   li.innerHTML = `
-    <div style="
-      border-left: 6px solid ${estadoColor}; 
-      padding: 10px; 
-      background: #f9f9f9; 
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    <div class = card_citas style="
+      border-left: 10px solid ${estadoColor};
+      border-righ
     ">
       <p><strong>📅 Fecha:</strong> ${c.fecha} a las ${c.hora}</p>
       <p><strong>🐶 Mascota:</strong> ${c.mascota}</p>

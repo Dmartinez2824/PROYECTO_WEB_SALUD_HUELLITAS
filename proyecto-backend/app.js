@@ -10,6 +10,11 @@ import servicioRoutes from './src/routes/servicio.routes.js';
 import historialRoutes from './src/routes/historial.routes.js';
 import especieRoutes from './src/routes/especie.routes.js';
 import sucursalRoutes from './src/routes/sucursal.routes.js';
+import suscripcionRoutes from './src/routes/suscripcion.routes.js';
+import adminRoutes from './src/routes/admin.routes.js';
+
+
+
 
 
 // Cargar variables de entorno
@@ -43,4 +48,6 @@ app.use('/api/servicios', servicioRoutes);
 app.use('/api/historial', historialRoutes); 
 app.use('/api/especies', especieRoutes);
 app.use('/api/sucursales', sucursalRoutes);
- 
+app.use('/api/suscripciones', suscripcionRoutes);
+app.use('/api/admin', adminRoutes);
+
